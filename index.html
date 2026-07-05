@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="One Piece Crew Showcase - A premium interactive landing page showcasing the Straw Hat Pirates. Explore Monkey D. Luffy, Roronoa Zoro, and the crew with immersive visual spotlight effects.">
+    <meta name="keywords" content="One Piece, Straw Hat Pirates, Luffy, Zoro, Nami, Anime, Spotlight Effect, Web Design, Interactive">
+    <meta name="author" content="Sarveshmariappan S">
+    <title>Straw Hat Pirates - One Piece Showcase</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader" class="loader-container">
+        <div class="loader-content">
+            <div class="compass-wrapper">
+                <svg class="compass-svg" viewBox="0 0 100 100" aria-hidden="true">
+                    <circle cx="50" cy="50" r="45" class="compass-ring" />
+                    <line x1="50" y1="5" x2="50" y2="95" class="compass-line" />
+                    <line x1="5" y1="50" x2="95" y2="50" class="compass-line" />
+                    <polygon points="50,15 45,50 50,85 55,50" class="compass-needle" />
+                </svg>
+            </div>
+            <h1 class="loader-title">GRAND LINE BOUND</h1>
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill"></div>
+            </div>
+            <p class="loader-status">Gathering the crew...</p>
+        </div>
+    </div>
+
+    <!-- Particle Background (Canvas) -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="progress-bar-container" aria-label="Page scroll progress">
+        <div class="progress-bar-fill" id="scroll-progress"></div>
+    </div>
+
+    <!-- Fixed Left Sidebar Navigation -->
+    <nav class="sidebar" aria-label="Crew Navigation">
+        <div class="sidebar-brand">
+            <a href="#hero" class="brand-link" aria-label="Go to Hero Section">
+                <svg class="brand-icon" viewBox="0 0 100 100">
+                    <!-- Stylized Straw Hat Icon -->
+                    <path d="M15,65 C15,65 30,55 50,55 C70,55 85,65 85,65 C95,67 98,72 85,73 C70,74 30,74 15,73 C2,72 5,67 15,65 Z" fill="#e0a927" />
+                    <path d="M30,55 C30,55 33,35 50,35 C67,35 70,55 70,55 Z" fill="#d82c2c" />
+                    <path d="M30,55 C40,58 60,58 70,55" stroke="#f1c40f" stroke-width="2" fill="none" />
+                </svg>
+                <span class="brand-text">SHC</span>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item active" data-target="hero">
+                <a href="#hero" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Overview</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="luffy">
+                <a href="#luffy" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Luffy</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="zoro">
+                <a href="#zoro" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Zoro</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="nami">
+                <a href="#nami" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Nami</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="usopp">
+                <a href="#usopp" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Usopp</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="sanji">
+                <a href="#sanji" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Sanji</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="chopper">
+                <a href="#chopper" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Chopper</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="robin">
+                <a href="#robin" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Robin</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="franky">
+                <a href="#franky" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Franky</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="brook">
+                <a href="#brook" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Brook</span>
+                </a>
+            </li>
+            <li class="nav-item" data-target="jinbe">
+                <a href="#jinbe" class="nav-link">
+                    <span class="nav-dot"></span>
+                    <span class="nav-name">Jinbe</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle Navigation">
+            <span class="toggle-bar"></span>
+            <span class="toggle-bar"></span>
+            <span class="toggle-bar"></span>
+        </div>
+    </nav>
+
+    <!-- Main Content Scroll Container -->
+    <main class="scroll-container">
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section" style="background-image: url('assets/hero-bg.jpg');">
+            <div class="hero-tint"></div>
+            <div class="hero-content">
+                <div class="glow-logo-container">
+                    <svg class="hero-logo" viewBox="0 0 100 100">
+                        <path d="M50,15 L20,30 L20,40 C20,65 50,85 50,85 C50,85 80,65 80,40 L80,30 Z" fill="none" stroke="rgba(212, 175, 55, 0.4)" stroke-width="2" />
+                        <path d="M50,18 L23,32 L23,40 C23,62 50,81 50,81 C50,81 77,62 77,40 L77,32 Z" fill="rgba(10, 17, 40, 0.65)" />
+                        <!-- Skull Icon -->
+                        <circle cx="50" cy="48" r="14" fill="#ffffff" />
+                        <!-- Eyes -->
+                        <circle cx="45" cy="46" r="3" fill="#000000" />
+                        <circle cx="55" cy="46" r="3" fill="#000000" />
+                        <!-- Nose -->
+                        <polygon points="50,51 48,54 52,54" fill="#000000" />
+                        <!-- Teeth -->
+                        <path d="M44,57 L44,60 M47,57 L47,60 M50,57 L50,60 M53,57 L53,60 M56,57 L56,60" stroke="#000000" stroke-width="1.5" />
+                        <!-- Straw Hat -->
+                        <path d="M28,40 C28,40 38,34 50,34 C62,34 72,40 72,40 C79,42 81,45 72,46 C60,47 40,47 28,46 C19,45 21,42 28,40 Z" fill="#e0a927" />
+                        <path d="M38,34 C38,34 40,22 50,22 C60,22 62,34 62,34 Z" fill="#d82c2c" />
+                    </svg>
+                </div>
+                <h1 class="hero-title">STRAW HAT PIRATES</h1>
+                <p class="hero-subtitle">JOURNEY ACROSS THE GRAND LINE</p>
+                
+                <div class="scroll-indicator" aria-hidden="true">
+                    <span class="scroll-text">SCROLL TO SET SAIL</span>
+                    <div class="scroll-mouse">
+                        <div class="scroll-wheel"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Luffy -->
+        <section id="luffy" class="crew-section" style="--char-bg-start: #3a0007; --char-bg-end: #140003; --accent-glow: rgba(212, 175, 55, 0.4);">
+            <div class="revealed-bg" style="background-image: url('assets/luffy.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/luffy.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">01</span>
+                    <h2 class="char-name">MONKEY D. LUFFY</h2>
+                    <h3 class="char-role">Captain</h3>
+                    <p class="char-desc">The founder and captain of the Straw Hat Pirates. Driven by a burning desire for absolute freedom, he set sail on a quest to locate the legendary One Piece and claim the title of King of the Pirates. Powered by the Hito Hito no Mi, Model: Nika, he fights with elastic creativity and an indomitable spirit.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">3,000,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Zoro -->
+        <section id="zoro" class="crew-section" style="--char-bg-start: #00220d; --char-bg-end: #000c05; --accent-glow: rgba(46, 204, 113, 0.4);">
+            <div class="revealed-bg" style="background-image: url('assets/zoro.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/zoro.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">02</span>
+                    <h2 class="char-name">RORONOA ZORO</h2>
+                    <h3 class="char-role">Swordsman</h3>
+                    <p class="char-desc">A former bounty hunter who was the first member to join Luffy's crew. Master of the formidable Santoryu (Three Sword Style), Zoro fights using a sword in each hand and one clamped in his mouth. He is bound by an ironclad oath to become the World's Strongest Swordsman, honoring a childhood promise.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">1,111,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Nami -->
+        <section id="nami" class="crew-section" style="--char-bg-start: #3d1b00; --char-bg-end: #170a00; --accent-glow: rgba(230, 126, 34, 0.4);">
+            <div class="revealed-bg" style="background-image: url('assets/nami.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/nami.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">03</span>
+                    <h2 class="char-name">NAMI</h2>
+                    <h3 class="char-role">Navigator</h3>
+                    <p class="char-desc">A brilliant cartographer and the navigator of the crew. Nami possesses an almost supernatural ability to sense shifts in the weather and navigate through the chaotic, unpredictable seas of the Grand Line. Her lifelong dream is to draw a complete map of the entire world.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">366,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Usopp -->
+        <section id="usopp" class="crew-section" style="--char-bg-start: #2b1f09; --char-bg-end: #120c02; --accent-glow: rgba(241, 196, 15, 0.35);">
+            <div class="revealed-bg" style="background-image: url('assets/usopp.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/usopp.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">04</span>
+                    <h2 class="char-name">USOPP</h2>
+                    <h3 class="char-role">Sniper</h3>
+                    <p class="char-desc">The crew's sharp-shooting sniper and a naturally gifted storyteller. Though plagued by cowardice in the face of mortal peril, Usopp fights to overcome his fears, striving to fulfill his dream of becoming a proud, courageous warrior of the sea. Armed with custom Pop Green seeds, his accuracy is unmatched.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">500,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Sanji -->
+        <section id="sanji" class="crew-section" style="--char-bg-start: #07152b; --char-bg-end: #020712; --accent-glow: rgba(52, 152, 219, 0.45);">
+            <div class="revealed-bg" style="background-image: url('assets/sanji.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/sanji.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">05</span>
+                    <h2 class="char-name">SANJI</h2>
+                    <h3 class="char-role">Cook</h3>
+                    <p class="char-desc">The gourmet chef of the Straw Hat crew and a master of high-velocity martial arts. Sanji fights exclusively using his legs to safeguard his hands, which he reserves solely for cooking culinary masterpieces. Driven by passion, he searches for the legendary All Blue—a sea containing every fish species in the world.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">1,032,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Chopper -->
+        <section id="chopper" class="crew-section" style="--char-bg-start: #3a1520; --char-bg-end: #170509; --accent-glow: rgba(253, 121, 168, 0.45);">
+            <div class="revealed-bg" style="background-image: url('assets/chopper.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/chopper.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">06</span>
+                    <h2 class="char-name">TONY TONY CHOPPER</h2>
+                    <h3 class="char-role">Doctor</h3>
+                    <p class="char-desc">A blue-nosed reindeer who ate the Hito Hito no Mi (Human-Human Fruit), granting him human intelligence and shape-shifting abilities. Trained by his mentor Dr. Hiluluk, Chopper is a genius physician. He is determined to cure any disease and travel the world to expand his medical knowledge.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">1,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Robin -->
+        <section id="robin" class="crew-section" style="--char-bg-start: #230833; --char-bg-end: #0e0214; --accent-glow: rgba(155, 89, 182, 0.45);">
+            <div class="revealed-bg" style="background-image: url('assets/robin.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/robin.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">07</span>
+                    <h2 class="char-name">NICO ROBIN</h2>
+                    <h3 class="char-role">Archaeologist</h3>
+                    <p class="char-desc">The brilliant archaeologist of the crew and the only living person capable of reading the ancient Poneglyphs. Armed with the power of the Hana Hana no Mi (Flower-Flower Fruit), she can sprout multiple limbs on any surface. Robin seeks to uncover the Rio Poneglyph and reveal the true, hidden history of the Void Century.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">930,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Franky -->
+        <section id="franky" class="crew-section" style="--char-bg-start: #002c38; --char-bg-end: #000f14; --accent-glow: rgba(0, 206, 209, 0.45);">
+            <div class="revealed-bg" style="background-image: url('assets/franky-bg.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/franky-fg.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">08</span>
+                    <h2 class="char-name">FRANKY</h2>
+                    <h3 class="char-role">Shipwright</h3>
+                    <p class="char-desc">The shipwright of the Straw Hats, Franky is a cola-powered cyborg who designed and built the crew's dream ship, the Thousand Sunny. With a larger-than-life personality and heavy-duty arsenal, his dream is to sail his masterpiece to the absolute end of the Grand Line, maintaining it along every mile.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">394,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Brook -->
+        <section id="brook" class="crew-section" style="--char-bg-start: #111111; --char-bg-end: #030303; --accent-glow: rgba(224, 224, 224, 0.35);">
+            <div class="revealed-bg" style="background-image: url('assets/brook.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/brook.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">09</span>
+                    <h2 class="char-name">BROOK</h2>
+                    <h3 class="char-role">Musician</h3>
+                    <p class="char-desc">A gentleman skeletal musician and master fencer who ate the Yomi Yomi no Mi (Revive-Revive Fruit), allowing him to return to life as a skeleton. Brandishing soul-chilling ice attacks and beautiful, haunting melodies, Brook seeks to sail the Grand Line and return to Reverse Mountain to reunite with Laboon the island whale.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">383,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew Member: Jinbe -->
+        <section id="jinbe" class="crew-section" style="--char-bg-start: #00222a; --char-bg-end: #000c0f; --accent-glow: rgba(0, 168, 204, 0.45);">
+            <div class="revealed-bg" style="background-image: url('assets/jinbe.jpg');"></div>
+            <div class="reveal-mask" style="background-image: url('assets/jinbe.jpg');"></div>
+            <div class="spotlight-glow"></div>
+            <div class="section-overlay"></div>
+            <div class="section-content-wrapper">
+                <div class="character-card glass-panel">
+                    <span class="char-index">10</span>
+                    <h2 class="char-name">JINBE</h2>
+                    <h3 class="char-role">Helmsman</h3>
+                    <p class="char-desc">A powerful whale shark fish-man and master of Fish-Man Karate, Jinbe is the crew's wise, veteran helmsman. Formerly a Warlord of the Sea, he pledged his life to Luffy, sharing the dream of bringing about true peace and equality between humans and fish-men across the oceans.</p>
+                    <div class="bounty-panel">
+                        <span class="bounty-title">BOUNTY</span>
+                        <div class="bounty-value-wrapper">
+                            <span class="bounty-currency">฿</span>
+                            <span class="bounty-amount">1,100,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content glass-panel">
+                <div class="footer-crest">
+                    <svg viewBox="0 0 100 100" class="footer-logo">
+                        <path d="M50,15 L20,30 L20,40 C20,65 50,85 50,85 C50,85 80,65 80,40 L80,30 Z" fill="none" stroke="#d4af37" stroke-width="2" />
+                        <path d="M40,35 L60,35 L60,40 L40,40 Z M35,45 L65,45 L65,55 L35,55 Z" fill="#d4af37" />
+                    </svg>
+                </div>
+                <p class="footer-credit">Made with dedication by <span class="author-highlight">Sarveshmariappan S</span></p>
+                <div class="footer-links">
+                    <a href="https://github.com/Sarveshmariappan" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        <svg class="github-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
+                        </svg>
+                        <span>GitHub Repository</span>
+                    </a>
+                </div>
+                <p class="footer-disclaimer">Fan-made educational project. One Piece and all associated materials are trademarks of Eiichiro Oda and Shueisha.</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>
