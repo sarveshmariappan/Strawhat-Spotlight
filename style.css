@@ -540,6 +540,11 @@ body {
     filter: grayscale(0.15) brightness(0.4) contrast(1.05) blur(2px);
 }
 
+/* Custom override for Luffy section to make the foreground silhouette and volcanic background visible */
+#luffy .reveal-mask {
+    filter: grayscale(0.2) brightness(0.32) contrast(1.1) blur(2px);
+}
+
 /* Soft glowing edge surrounding the spotlight reveal circle */
 .spotlight-glow {
     position: absolute;
