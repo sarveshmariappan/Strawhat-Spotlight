@@ -137,22 +137,34 @@
 
         /* Character-Specific Foreground Visibility Overrides */
         #luffy .reveal-mask {
-            filter: grayscale(0.2) brightness(0.32) contrast(1.1) blur(2px);
+            filter: grayscale(0.2) brightness(0.32) contrast(1.1) blur(0px);
         }
-        #franky .reveal-mask {
-            filter: grayscale(0.15) brightness(0.4) contrast(1.05) blur(2px);
+        #zoro .reveal-mask {
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
         }
         #nami .reveal-mask {
-            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(2px);
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
+        }
+        #usopp .reveal-mask {
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
         }
         #sanji .reveal-mask {
-            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(2px);
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
+        }
+        #chopper .reveal-mask {
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
         }
         #robin .reveal-mask {
-            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(2px);
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
+        }
+        #franky .reveal-mask {
+            filter: grayscale(0.15) brightness(0.4) contrast(1.05) blur(0px);
         }
         #brook .reveal-mask {
-            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(2px);
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
+        }
+        #jinbe .reveal-mask {
+            filter: grayscale(0.1) brightness(0.45) contrast(1.1) blur(0px);
         }
 
         /* Soft glowing edge surrounding the spotlight reveal circle */
@@ -419,8 +431,8 @@
 
         <!-- Crew Member: Usopp -->
         <section id="usopp" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#2b1f09] to-[#120c02] flex items-center" style="--char-bg-start: #2b1f09; --char-bg-end: #120c02; --accent-glow: rgba(241, 196, 15, 0.35);">
-            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp.jpg');"></div>
-            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp.jpg');"></div>
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp-bg.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp-fg.jpg');"></div>
             <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
             <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
             <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
