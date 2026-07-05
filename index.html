@@ -7,184 +7,352 @@
     <meta name="keywords" content="One Piece, Straw Hat Pirates, Luffy, Zoro, Nami, Anime, Spotlight Effect, Web Design, Interactive">
     <meta name="author" content="Sarveshmariappan S">
     <title>Straw Hat Pirates - One Piece Showcase</title>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- CSS Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- Tailwind CSS v4 CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    
+    <!-- Custom Style System (Spotlight Masks, Keyframes, Scroll Snap) -->
+    <style type="text/css">
+        :root {
+            --color-bg-darker: #02040a;
+            --color-bg-dark: #070d19;
+            --color-bg-card: rgba(6, 12, 26, 0.45);
+            --color-accent-gold: #d4af37;
+            --color-accent-gold-glow: rgba(212, 175, 55, 0.4);
+            --color-accent-crimson: #e63946;
+            --color-accent-crimson-dark: #800f2f;
+            
+            --font-header: 'Cinzel', serif;
+            --font-body: 'Outfit', sans-serif;
+            
+            /* Spotlight custom properties */
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            --spotlight-radius: 180px;
+            --accent-glow: rgba(212, 175, 55, 0.3);
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg-darker);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg-darker);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-accent-crimson-dark);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-accent-gold);
+        }
+
+        /* Hide scrollbars for navbar list */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Compass Loader Needle Wobble keyframes */
+        @keyframes compass-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes needle-wobble {
+            0% { transform: rotate(0deg); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-10deg); }
+            60% { transform: rotate(30deg); }
+            80% { transform: rotate(-20deg); }
+            100% { transform: rotate(5deg); }
+        }
+        .compass-svg {
+            animation: compass-spin 6s linear infinite;
+        }
+        .compass-needle {
+            transform-origin: 50px 50px;
+            animation: needle-wobble 3s ease-in-out infinite alternate;
+        }
+
+        /* Scroll Progress mouse animations */
+        @keyframes scroll-wheel-anim {
+            0% { transform: translate(-50%, 0); opacity: 1; }
+            50% { transform: translate(-50%, 8px); opacity: 0.5; }
+            100% { transform: translate(-50%, 16px); opacity: 0; }
+        }
+        .scroll-wheel-icon {
+            animation: scroll-wheel-anim 1.5s ease-in-out infinite;
+        }
+
+        /* Float animation for hero logos */
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Underneath Layer: Sharp, colorful background image */
+        .revealed-bg {
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        /* Top Layer: Darkened, grayscale, blurred overlay that gets masked out by spotlight */
+        .reveal-mask {
+            z-index: 3;
+            opacity: 1;
+            filter: grayscale(1) brightness(0.12) contrast(1.1) blur(6px);
+            /* Smooth CSS mask spotlight with custom property tracking */
+            -webkit-mask-image: radial-gradient(
+                circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y),
+                transparent 0%,
+                transparent 70%,
+                black 100%
+            );
+            mask-image: radial-gradient(
+                circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y),
+                transparent 0%,
+                transparent 70%,
+                black 100%
+            );
+        }
+
+        /* Character-Specific Foreground Visibility Overrides */
+        #luffy .reveal-mask {
+            filter: grayscale(0.2) brightness(0.32) contrast(1.1) blur(2px);
+        }
+        #franky .reveal-mask {
+            filter: grayscale(0.15) brightness(0.4) contrast(1.05) blur(2px);
+        }
+
+        /* Soft glowing edge surrounding the spotlight reveal circle */
+        .spotlight-glow {
+            z-index: 4;
+            background: radial-gradient(
+                circle calc(var(--spotlight-radius) + 15px) at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 70%,
+                var(--accent-glow) 90%,
+                rgba(0, 0, 0, 0) 100%
+            );
+        }
+
+        /* Premium Navigation Link Styling overrides */
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-left: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: var(--color-text-primary) !important;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 2px solid rgba(212, 175, 55, 0.4);
+            padding-left: 20px !important;
+        }
+        .nav-item.active .nav-link {
+            color: var(--color-accent-gold) !important;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border-left: 2px solid var(--color-accent-gold);
+            padding-left: 20px !important;
+            font-weight: 700;
+        }
+        .nav-item.active .nav-dot {
+            background-color: var(--color-accent-gold) !important;
+            box-shadow: 0 0 10px var(--color-accent-gold);
+            width: 8px;
+            height: 8px;
+        }
+
+        /* Mobile sidebar classes */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .scroll-container {
+                padding-left: 0 !important;
+            }
+            :root {
+                --spotlight-radius: 220px;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="text-[#f5f6f8] select-none">
 
     <!-- Loading Screen -->
-    <div id="loader" class="loader-container">
-        <div class="loader-content">
-            <div class="compass-wrapper">
-                <svg class="compass-svg" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="50" r="45" class="compass-ring" />
-                    <line x1="50" y1="5" x2="50" y2="95" class="compass-line" />
-                    <line x1="5" y1="50" x2="95" y2="50" class="compass-line" />
-                    <polygon points="50,15 45,50 50,85 55,50" class="compass-needle" />
+    <div id="loader" class="fixed top-0 left-0 w-screen h-screen bg-[#02040a] z-[9999] flex justify-center items-center transition-all duration-800 cubic-bezier(0.77,0,0.175,1)">
+        <div class="text-center flex flex-col items-center">
+            <div class="w-[120px] h-[120px] mb-6 filter drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                <svg class="compass-svg w-full h-full" viewBox="0 0 100 100" aria-hidden="true">
+                    <circle cx="50" cy="50" r="45" class="fill-none stroke-[#d4af37] stroke-[3]" stroke-dasharray="283" stroke-dashoffset="0" />
+                    <line x1="50" y1="5" x2="50" y2="95" class="stroke-[#d4af37]/40 stroke-[1.5]" />
+                    <line x1="5" y1="50" x2="95" y2="50" class="stroke-[#d4af37]/40 stroke-[1.5]" />
+                    <polygon points="50,15 45,50 50,85 55,50" class="compass-needle fill-[#e63946]" />
                 </svg>
             </div>
-            <h1 class="loader-title">GRAND LINE BOUND</h1>
-            <div class="loader-bar-bg">
-                <div class="loader-bar-fill"></div>
+            <h1 class="font-['Cinzel'] font-bold text-2xl tracking-[6px] text-[#f5f6f8] mb-4 text-shadow-[0_0_10px_rgba(255,255,255,0.2)]">GRAND LINE BOUND</h1>
+            <div class="w-[200px] h-[3px] bg-white/10 rounded-[2px] overflow-hidden mb-3">
+                <div class="loader-bar-fill w-0 h-full bg-gradient-to-r from-[#e63946] to-[#d4af37] shadow-[0_0_8px_#d4af37] transition-all duration-100 ease-out"></div>
             </div>
-            <p class="loader-status">Gathering the crew...</p>
+            <p class="loader-status text-xs tracking-[2px] text-[#a0a5b5] uppercase">Gathering the crew...</p>
         </div>
     </div>
 
     <!-- Particle Background (Canvas) -->
-    <canvas id="particle-canvas"></canvas>
+    <canvas id="particle-canvas" class="fixed top-0 left-0 w-screen h-screen z-2 pointer-events-none"></canvas>
 
     <!-- Scroll Progress Indicator -->
-    <div class="progress-bar-container" aria-label="Page scroll progress">
-        <div class="progress-bar-fill" id="scroll-progress"></div>
+    <div class="fixed top-0 left-0 w-screen h-1 z-[1001] bg-transparent" aria-label="Page scroll progress">
+        <div class="progress-bar-fill w-0 h-full bg-gradient-to-r from-[#e63946] to-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.4)] transition-all duration-100 ease-out" id="scroll-progress"></div>
     </div>
 
-    <!-- Fixed Left Sidebar Navigation -->
-    <nav class="sidebar" aria-label="Crew Navigation">
-        <div class="sidebar-brand">
-            <a href="#hero" class="brand-link" aria-label="Go to Hero Section">
-                <svg class="brand-icon" viewBox="0 0 100 100">
-                    <!-- Stylized Straw Hat Icon -->
-                    <path d="M15,65 C15,65 30,55 50,55 C70,55 85,65 85,65 C95,67 98,72 85,73 C70,74 30,74 15,73 C2,72 5,67 15,65 Z" fill="#e0a927" />
-                    <path d="M30,55 C30,55 33,35 50,35 C67,35 70,55 70,55 Z" fill="#d82c2c" />
-                    <path d="M30,55 C40,58 60,58 70,55" stroke="#f1c40f" stroke-width="2" fill="none" />
-                </svg>
-                <span class="brand-text">SHC</span>
+    <!-- Fixed Left Sidebar Navigation (Compact & Scrollable Layout) -->
+    <nav class="sidebar fixed top-0 left-0 w-[240px] h-screen bg-[#02040a]/85 backdrop-blur-xl border-r border-[#d4af37]/15 z-[1000] flex flex-col py-6 px-4 transition-transform duration-400 ease-out" aria-label="Crew Navigation">
+        <!-- Logo Header with Supporting Glass Card & Glow -->
+        <div class="sidebar-brand mb-5 flex justify-center items-center w-full">
+            <a href="#hero" class="flex justify-center items-center w-full bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/10 shadow-inner group" aria-label="Go to Hero Section">
+                <img src="assets/logo.png" alt="One Piece Logo" class="max-w-[130px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] group-hover:scale-105 transition-all duration-500 ease-out">
             </a>
         </div>
-        <ul class="nav-links">
-            <li class="nav-item active" data-target="hero">
-                <a href="#hero" class="nav-link">
-                    <span class="nav-dot"></span>
+        
+        <!-- Scrollable Navigation links list with hidden custom scrollbar -->
+        <ul class="nav-links flex flex-col gap-1.5 overflow-y-auto no-scrollbar max-h-[calc(100vh-140px)] flex-grow">
+            <li class="nav-item relative active" data-target="hero">
+                <a href="#hero" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Overview</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="luffy">
-                <a href="#luffy" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="luffy">
+                <a href="#luffy" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Luffy</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="zoro">
-                <a href="#zoro" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="zoro">
+                <a href="#zoro" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Zoro</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="nami">
-                <a href="#nami" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="nami">
+                <a href="#nami" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Nami</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="usopp">
-                <a href="#usopp" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="usopp">
+                <a href="#usopp" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Usopp</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="sanji">
-                <a href="#sanji" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="sanji">
+                <a href="#sanji" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Sanji</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="chopper">
-                <a href="#chopper" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="chopper">
+                <a href="#chopper" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Chopper</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="robin">
-                <a href="#robin" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="robin">
+                <a href="#robin" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Robin</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="franky">
-                <a href="#franky" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="franky">
+                <a href="#franky" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Franky</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="brook">
-                <a href="#brook" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="brook">
+                <a href="#brook" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Brook</span>
                 </a>
             </li>
-            <li class="nav-item" data-target="jinbe">
-                <a href="#jinbe" class="nav-link">
-                    <span class="nav-dot"></span>
+            <li class="nav-item relative" data-target="jinbe">
+                <a href="#jinbe" class="nav-link flex items-center gap-3 text-decoration-none text-[#a0a5b5] hover:text-[#f5f6f8] py-1.5 px-3 rounded-lg text-xs font-semibold tracking-widest uppercase">
+                    <span class="nav-dot w-1.5 h-1.5 rounded-full bg-[#a0a5b5] transition-all duration-400"></span>
                     <span class="nav-name">Jinbe</span>
                 </a>
             </li>
         </ul>
-        <div class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle Navigation">
-            <span class="toggle-bar"></span>
-            <span class="toggle-bar"></span>
-            <span class="toggle-bar"></span>
-        </div>
+        <!-- Mobile Navigation Menu Toggle Button -->
+        <button id="sidebar-toggle-btn" class="sidebar-toggle max-md:flex hidden absolute top-5 -right-[50px] w-[50px] h-[50px] bg-[#02040a]/80 backdrop-blur-md border-y border-r border-[#d4af37]/15 rounded-r-lg flex-col justify-center items-center gap-1.5 cursor-pointer z-[1002]" aria-label="Toggle Navigation">
+            <span class="toggle-bar w-6 h-0.5 bg-[#f5f6f8] transition-all duration-400"></span>
+            <span class="toggle-bar w-6 h-0.5 bg-[#f5f6f8] transition-all duration-400"></span>
+            <span class="toggle-bar w-6 h-0.5 bg-[#f5f6f8] transition-all duration-400"></span>
+        </button>
     </nav>
 
     <!-- Main Content Scroll Container -->
-    <main class="scroll-container">
+    <main class="scroll-container h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth pl-[240px] max-md:pl-0">
 
         <!-- Hero Section -->
-        <section id="hero" class="hero-section" style="background-image: url('assets/hero-bg.jpg');">
-            <div class="hero-tint"></div>
-            <div class="hero-content">
-                <div class="glow-logo-container">
-                    <svg class="hero-logo" viewBox="0 0 100 100">
-                        <path d="M50,15 L20,30 L20,40 C20,65 50,85 50,85 C50,85 80,65 80,40 L80,30 Z" fill="none" stroke="rgba(212, 175, 55, 0.4)" stroke-width="2" />
-                        <path d="M50,18 L23,32 L23,40 C23,62 50,81 50,81 C50,81 77,62 77,40 L77,32 Z" fill="rgba(10, 17, 40, 0.65)" />
-                        <!-- Skull Icon -->
-                        <circle cx="50" cy="48" r="14" fill="#ffffff" />
-                        <!-- Eyes -->
-                        <circle cx="45" cy="46" r="3" fill="#000000" />
-                        <circle cx="55" cy="46" r="3" fill="#000000" />
-                        <!-- Nose -->
-                        <polygon points="50,51 48,54 52,54" fill="#000000" />
-                        <!-- Teeth -->
-                        <path d="M44,57 L44,60 M47,57 L47,60 M50,57 L50,60 M53,57 L53,60 M56,57 L56,60" stroke="#000000" stroke-width="1.5" />
-                        <!-- Straw Hat -->
-                        <path d="M28,40 C28,40 38,34 50,34 C62,34 72,40 72,40 C79,42 81,45 72,46 C60,47 40,47 28,46 C19,45 21,42 28,40 Z" fill="#e0a927" />
-                        <path d="M38,34 C38,34 40,22 50,22 C60,22 62,34 62,34 Z" fill="#d82c2c" />
-                    </svg>
+        <section id="hero" class="hero-section h-screen snap-start relative flex justify-center items-center overflow-hidden bg-cover bg-center bg-no-repeat bg-[#02040a] bg-gradient-to-br from-[#050a14] to-[#010205]" style="background-image: url('assets/hero-bg.jpg');">
+            <div class="hero-tint absolute top-0 left-0 w-full h-full bg-radial from-transparent via-[#02040a]/40 to-[#02040a]/90 z-1"></div>
+            <div class="hero-content z-2 text-center max-w-[800px] p-5">
+                <!-- Hero Logo with Glass Backing Container & Soft Gold Halo Glow -->
+                <div class="glow-logo-container w-[350px] md:w-[480px] max-w-full mx-auto mb-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-inner filter drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] animate-float">
+                    <img src="assets/logo.png" alt="One Piece Brand Logo" class="w-full">
                 </div>
-                <h1 class="hero-title">STRAW HAT PIRATES</h1>
-                <p class="hero-subtitle">JOURNEY ACROSS THE GRAND LINE</p>
+                <h1 class="font-['Cinzel'] text-4xl md:text-5xl font-black tracking-[6px] text-transparent bg-clip-text bg-gradient-to-b from-[#ffffff] via-[#ffffff] to-[#d4af37] mb-5 text-shadow-[0_4px_15px_rgba(0,0,0,0.6)] animate-fade-in">STRAW HAT PIRATES</h1>
+                <p class="font-['Cinzel'] text-base md:text-lg tracking-[5px] text-[#a0a5b5] mb-12 uppercase text-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">JOURNEY ACROSS THE GRAND LINE</p>
                 
-                <div class="scroll-indicator" aria-hidden="true">
-                    <span class="scroll-text">SCROLL TO SET SAIL</span>
-                    <div class="scroll-mouse">
-                        <div class="scroll-wheel"></div>
+                <div class="scroll-indicator flex flex-col items-center gap-4 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                    <span class="text-xs tracking-[4px] text-[#d4af37] font-semibold uppercase">SCROLL TO SET SAIL</span>
+                    <div class="w-[26px] h-[44px] border-2 border-[#d4af37] rounded-[15px] relative shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                        <div class="scroll-wheel-icon w-[4px] h-[8px] bg-[#d4af37] rounded-sm absolute top-2 left-1/2 -translate-x-1/2"></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Crew Member: Luffy -->
-        <section id="luffy" class="crew-section" style="--char-bg-start: #3a0007; --char-bg-end: #140003; --accent-glow: rgba(212, 175, 55, 0.4);">
-            <div class="revealed-bg" style="background-image: url('assets/luffy-bg.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/luffy-fg.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">01</span>
-                    <h2 class="char-name">MONKEY D. LUFFY</h2>
-                    <h3 class="char-role">Captain</h3>
-                    <p class="char-desc">The founder and captain of the Straw Hat Pirates. Driven by a burning desire for absolute freedom, he set sail on a quest to locate the legendary One Piece and claim the title of King of the Pirates. Powered by the Hito Hito no Mi, Model: Nika, he fights with elastic creativity and an indomitable spirit.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">3,000,000,000</span>
+        <section id="luffy" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#3a0007] to-[#140003] flex items-center" style="--char-bg-start: #3a0007; --char-bg-end: #140003; --accent-glow: rgba(212, 175, 55, 0.4);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/luffy-bg.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/luffy-fg.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center">
+                <!-- Fades out to 3% opacity on hover to reveal background image -->
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">01</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">MONKEY D. LUFFY</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Captain</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">The founder and captain of the Straw Hat Pirates. Driven by a burning desire for absolute freedom, he set sail on a quest to locate the legendary One Piece and claim the title of King of the Pirates. Powered by the Hito Hito no Mi, Model: Nika, he fights with elastic creativity and an indomitable spirit.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">3,000,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -192,22 +360,22 @@
         </section>
 
         <!-- Crew Member: Zoro -->
-        <section id="zoro" class="crew-section" style="--char-bg-start: #00220d; --char-bg-end: #000c05; --accent-glow: rgba(46, 204, 113, 0.4);">
-            <div class="revealed-bg" style="background-image: url('assets/zoro.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/zoro.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">02</span>
-                    <h2 class="char-name">RORONOA ZORO</h2>
-                    <h3 class="char-role">Swordsman</h3>
-                    <p class="char-desc">A former bounty hunter who was the first member to join Luffy's crew. Master of the formidable Santoryu (Three Sword Style), Zoro fights using a sword in each hand and one clamped in his mouth. He is bound by an ironclad oath to become the World's Strongest Swordsman, honoring a childhood promise.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">1,111,000,000</span>
+        <section id="zoro" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#00220d] to-[#000c05] flex items-center" style="--char-bg-start: #00220d; --char-bg-end: #000c05; --accent-glow: rgba(46, 204, 113, 0.4);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/zoro.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/zoro.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">02</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">RORONOA ZORO</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Swordsman</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">A former bounty hunter who was the first member to join Luffy's crew. Master of the formidable Santoryu (Three Sword Style), Zoro fights using a sword in each hand and one clamped in his mouth. He is bound by an ironclad oath to become the World's Strongest Swordsman, honoring a childhood promise.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">1,111,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -215,22 +383,22 @@
         </section>
 
         <!-- Crew Member: Nami -->
-        <section id="nami" class="crew-section" style="--char-bg-start: #3d1b00; --char-bg-end: #170a00; --accent-glow: rgba(230, 126, 34, 0.4);">
-            <div class="revealed-bg" style="background-image: url('assets/nami.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/nami.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">03</span>
-                    <h2 class="char-name">NAMI</h2>
-                    <h3 class="char-role">Navigator</h3>
-                    <p class="char-desc">A brilliant cartographer and the navigator of the crew. Nami possesses an almost supernatural ability to sense shifts in the weather and navigate through the chaotic, unpredictable seas of the Grand Line. Her lifelong dream is to draw a complete map of the entire world.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">366,000,000</span>
+        <section id="nami" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#3d1b00] to-[#170a00] flex items-center" style="--char-bg-start: #3d1b00; --char-bg-end: #170a00; --accent-glow: rgba(230, 126, 34, 0.4);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/nami.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/nami.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">03</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">NAMI</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Navigator</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">A brilliant cartographer and the navigator of the crew. Nami possesses an almost supernatural ability to sense shifts in the weather and navigate through the chaotic, unpredictable seas of the Grand Line. Her lifelong dream is to draw a complete map of the entire world.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">366,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -238,22 +406,22 @@
         </section>
 
         <!-- Crew Member: Usopp -->
-        <section id="usopp" class="crew-section" style="--char-bg-start: #2b1f09; --char-bg-end: #120c02; --accent-glow: rgba(241, 196, 15, 0.35);">
-            <div class="revealed-bg" style="background-image: url('assets/usopp.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/usopp.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">04</span>
-                    <h2 class="char-name">USOPP</h2>
-                    <h3 class="char-role">Sniper</h3>
-                    <p class="char-desc">The crew's sharp-shooting sniper and a naturally gifted storyteller. Though plagued by cowardice in the face of mortal peril, Usopp fights to overcome his fears, striving to fulfill his dream of becoming a proud, courageous warrior of the sea. Armed with custom Pop Green seeds, his accuracy is unmatched.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">500,000,000</span>
+        <section id="usopp" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#2b1f09] to-[#120c02] flex items-center" style="--char-bg-start: #2b1f09; --char-bg-end: #120c02; --accent-glow: rgba(241, 196, 15, 0.35);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/usopp.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">04</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">USOPP</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Sniper</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">The crew's sharp-shooting sniper and a naturally gifted storyteller. Though plagued by cowardice in the face of mortal peril, Usopp fights to overcome his fears, striving to fulfill his dream of becoming a proud, courageous warrior of the sea. Armed with custom Pop Green seeds, his accuracy is unmatched.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">500,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -261,22 +429,22 @@
         </section>
 
         <!-- Crew Member: Sanji -->
-        <section id="sanji" class="crew-section" style="--char-bg-start: #07152b; --char-bg-end: #020712; --accent-glow: rgba(52, 152, 219, 0.45);">
-            <div class="revealed-bg" style="background-image: url('assets/sanji.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/sanji.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">05</span>
-                    <h2 class="char-name">SANJI</h2>
-                    <h3 class="char-role">Cook</h3>
-                    <p class="char-desc">The gourmet chef of the Straw Hat crew and a master of high-velocity martial arts. Sanji fights exclusively using his legs to safeguard his hands, which he reserves solely for cooking culinary masterpieces. Driven by passion, he searches for the legendary All Blue—a sea containing every fish species in the world.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">1,032,000,000</span>
+        <section id="sanji" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#07152b] to-[#020712] flex items-center" style="--char-bg-start: #07152b; --char-bg-end: #020712; --accent-glow: rgba(52, 152, 219, 0.45);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/sanji.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/sanji.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">05</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">SANJI</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Cook</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">The gourmet chef of the Straw Hat crew and a master of high-velocity martial arts. Sanji fights exclusively using his legs to safeguard his hands, which he reserves solely for cooking culinary masterpieces. Driven by passion, he searches for the legendary All Blue—a sea containing every fish species in the world.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">1,032,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -284,22 +452,22 @@
         </section>
 
         <!-- Crew Member: Chopper -->
-        <section id="chopper" class="crew-section" style="--char-bg-start: #3a1520; --char-bg-end: #170509; --accent-glow: rgba(253, 121, 168, 0.45);">
-            <div class="revealed-bg" style="background-image: url('assets/chopper.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/chopper.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">06</span>
-                    <h2 class="char-name">TONY TONY CHOPPER</h2>
-                    <h3 class="char-role">Doctor</h3>
-                    <p class="char-desc">A blue-nosed reindeer who ate the Hito Hito no Mi (Human-Human Fruit), granting him human intelligence and shape-shifting abilities. Trained by his mentor Dr. Hiluluk, Chopper is a genius physician. He is determined to cure any disease and travel the world to expand his medical knowledge.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">1,000</span>
+        <section id="chopper" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#3a1520] to-[#170509] flex items-center" style="--char-bg-start: #3a1520; --char-bg-end: #170509; --accent-glow: rgba(253, 121, 168, 0.45);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/chopper.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/chopper.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">06</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">TONY TONY CHOPPER</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Doctor</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">A blue-nosed reindeer who ate the Hito Hito no Mi (Human-Human Fruit), granting him human intelligence and shape-shifting abilities. Trained by his mentor Dr. Hiluluk, Chopper is a genius physician. He is determined to cure any disease and travel the world to expand his medical knowledge.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">1,000</span>
                         </div>
                     </div>
                 </div>
@@ -307,22 +475,22 @@
         </section>
 
         <!-- Crew Member: Robin -->
-        <section id="robin" class="crew-section" style="--char-bg-start: #230833; --char-bg-end: #0e0214; --accent-glow: rgba(155, 89, 182, 0.45);">
-            <div class="revealed-bg" style="background-image: url('assets/robin.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/robin.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">07</span>
-                    <h2 class="char-name">NICO ROBIN</h2>
-                    <h3 class="char-role">Archaeologist</h3>
-                    <p class="char-desc">The brilliant archaeologist of the crew and the only living person capable of reading the ancient Poneglyphs. Armed with the power of the Hana Hana no Mi (Flower-Flower Fruit), she can sprout multiple limbs on any surface. Robin seeks to uncover the Rio Poneglyph and reveal the true, hidden history of the Void Century.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">930,000,000</span>
+        <section id="robin" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#230833] to-[#0e0214] flex items-center" style="--char-bg-start: #230833; --char-bg-end: #0e0214; --accent-glow: rgba(155, 89, 182, 0.45);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/robin.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/robin.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">07</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">NICO ROBIN</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Archaeologist</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">The brilliant archaeologist of the crew and the only living person capable of reading the ancient Poneglyphs. Armed with the power of the Hana Hana no Mi (Flower-Flower Fruit), she can sprout multiple limbs on any surface. Robin seeks to uncover the Rio Poneglyph and reveal the true, hidden history of the Void Century.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">930,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -330,22 +498,22 @@
         </section>
 
         <!-- Crew Member: Franky -->
-        <section id="franky" class="crew-section" style="--char-bg-start: #002c38; --char-bg-end: #000f14; --accent-glow: rgba(0, 206, 209, 0.45);">
-            <div class="revealed-bg" style="background-image: url('assets/franky-bg.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/franky-fg.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">08</span>
-                    <h2 class="char-name">FRANKY</h2>
-                    <h3 class="char-role">Shipwright</h3>
-                    <p class="char-desc">The shipwright of the Straw Hats, Franky is a cola-powered cyborg who designed and built the crew's dream ship, the Thousand Sunny. With a larger-than-life personality and heavy-duty arsenal, his dream is to sail his masterpiece to the absolute end of the Grand Line, maintaining it along every mile.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">394,000,000</span>
+        <section id="franky" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#002c38] to-[#000f14] flex items-center" style="--char-bg-start: #002c38; --char-bg-end: #000f14; --accent-glow: rgba(0, 206, 209, 0.45);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/franky-bg.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/franky-fg.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">08</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">FRANKY</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Shipwright</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">The shipwright of the Straw Hats, Franky is a cola-powered cyborg who designed and built the crew's dream ship, the Thousand Sunny. With a larger-than-life personality and heavy-duty arsenal, his dream is to sail his masterpiece to the absolute end of the Grand Line, maintaining it along every mile.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">394,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -353,22 +521,22 @@
         </section>
 
         <!-- Crew Member: Brook -->
-        <section id="brook" class="crew-section" style="--char-bg-start: #111111; --char-bg-end: #030303; --accent-glow: rgba(224, 224, 224, 0.35);">
-            <div class="revealed-bg" style="background-image: url('assets/brook.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/brook.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">09</span>
-                    <h2 class="char-name">BROOK</h2>
-                    <h3 class="char-role">Musician</h3>
-                    <p class="char-desc">A gentleman skeletal musician and master fencer who ate the Yomi Yomi no Mi (Revive-Revive Fruit), allowing him to return to life as a skeleton. Brandishing soul-chilling ice attacks and beautiful, haunting melodies, Brook seeks to sail the Grand Line and return to Reverse Mountain to reunite with Laboon the island whale.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">383,000,000</span>
+        <section id="brook" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#111111] to-[#030303] flex items-center" style="--char-bg-start: #111111; --char-bg-end: #030303; --accent-glow: rgba(224, 224, 224, 0.35);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/brook.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/brook.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">09</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">BROOK</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Musician</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">A gentleman skeletal musician and master fencer who ate the Yomi Yomi no Mi (Revive-Revive Fruit), allowing him to return to life as a skeleton. Brandishing soul-chilling ice attacks and beautiful, haunting melodies, Brook seeks to sail the Grand Line and return to Reverse Mountain to reunite with Laboon the island whale.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">383,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -376,22 +544,22 @@
         </section>
 
         <!-- Crew Member: Jinbe -->
-        <section id="jinbe" class="crew-section" style="--char-bg-start: #00222a; --char-bg-end: #000c0f; --accent-glow: rgba(0, 168, 204, 0.45);">
-            <div class="revealed-bg" style="background-image: url('assets/jinbe.jpg');"></div>
-            <div class="reveal-mask" style="background-image: url('assets/jinbe.jpg');"></div>
-            <div class="spotlight-glow"></div>
-            <div class="section-overlay"></div>
-            <div class="section-content-wrapper">
-                <div class="character-card glass-panel">
-                    <span class="char-index">10</span>
-                    <h2 class="char-name">JINBE</h2>
-                    <h3 class="char-role">Helmsman</h3>
-                    <p class="char-desc">A powerful whale shark fish-man and master of Fish-Man Karate, Jinbe is the crew's wise, veteran helmsman. Formerly a Warlord of the Sea, he pledged his life to Luffy, sharing the dream of bringing about true peace and equality between humans and fish-men across the oceans.</p>
-                    <div class="bounty-panel">
-                        <span class="bounty-title">BOUNTY</span>
-                        <div class="bounty-value-wrapper">
-                            <span class="bounty-currency">฿</span>
-                            <span class="bounty-amount">1,100,000,000</span>
+        <section id="jinbe" class="crew-section h-screen snap-start snap-always relative overflow-hidden bg-[#02040a] bg-radial from-[#00222a] to-[#000c0f] flex items-center" style="--char-bg-start: #00222a; --char-bg-end: #000c0f; --accent-glow: rgba(0, 168, 204, 0.45);">
+            <div class="revealed-bg absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/jinbe.jpg');"></div>
+            <div class="reveal-mask absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none transition-opacity duration-1000" style="background-image: url('assets/jinbe.jpg');"></div>
+            <div class="spotlight-glow absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"></div>
+            <div class="section-overlay absolute top-0 left-0 w-full h-full bg-gradient-to-r from-[#02040a]/75 via-[#02040a]/15 to-[#02040a]/75 z-5 pointer-events-none"></div>
+            <div class="section-content-wrapper relative z-6 w-full max-w-[1200px] mx-auto px-10 md:px-20 flex items-center justify-end">
+                <div class="character-card w-[480px] min-h-[450px] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl flex flex-col justify-center relative overflow-hidden opacity-0 translate-y-10 transition-all duration-600 ease-out hover:opacity-[0.03]! hover:scale-[0.99]">
+                    <span class="char-index absolute -top-[20px] right-2.5 font-['Cinzel'] font-black text-[10rem] text-white/2 leading-none pointer-events-none transition-all duration-600">10</span>
+                    <h2 class="font-['Cinzel'] text-3xl font-bold tracking-wider text-[#f5f6f8] mb-1 relative after:content-[''] after:block after:w-[60px] after:h-[2px] after:bg-[#d4af37] after:mt-4 after:mb-5 after:transition-all after:duration-600 active-bar">JINBE</h2>
+                    <h3 class="font-['Cinzel'] text-sm font-semibold tracking-[3px] text-[#d4af37] uppercase mb-5">Helmsman</h3>
+                    <p class="text-sm md:text-[0.92rem] leading-relaxed text-[#a0a5b5] mb-8">A powerful whale shark fish-man and master of Fish-Man Karate, Jinbe is the crew's wise, veteran helmsman. Formerly a Warlord of the Sea, he pledged his life to Luffy, sharing the dream of bringing about true peace and equality between humans and fish-men across the oceans.</p>
+                    <div class="bounty-panel bg-[#02040a]/50 border border-dashed border-[#d4af37]/25 rounded-[10px] py-4 px-6 flex flex-col gap-1 shadow-inner">
+                        <span class="font-['Cinzel'] text-[0.7rem] tracking-[3px] text-[#a0a5b5]">BOUNTY</span>
+                        <div class="bounty-value-wrapper flex items-baseline gap-2">
+                            <span class="font-['Cinzel'] text-lg font-bold text-[#d4af37]">฿</span>
+                            <span class="font-['Cinzel'] text-2xl font-black text-white tracking-widest drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">1,100,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -399,30 +567,385 @@
         </section>
 
         <!-- Footer -->
-        <footer class="site-footer">
-            <div class="footer-content glass-panel">
-                <div class="footer-crest">
-                    <svg viewBox="0 0 100 100" class="footer-logo">
-                        <path d="M50,15 L20,30 L20,40 C20,65 50,85 50,85 C50,85 80,65 80,40 L80,30 Z" fill="none" stroke="#d4af37" stroke-width="2" />
-                        <path d="M40,35 L60,35 L60,40 L40,40 Z M35,45 L65,45 L65,55 L35,55 Z" fill="#d4af37" />
-                    </svg>
+        <footer class="site-footer h-screen snap-start bg-[#02040a] bg-radial from-[#050a14] to-[#010205] flex justify-center items-center relative">
+            <div class="footer-content max-w-[600px] w-[90%] p-10 bg-[#060c1a]/45 backdrop-blur-md border border-white/6 rounded-[20px] shadow-2xl text-center flex flex-col items-center gap-6">
+                <!-- Footer Logo with Glass Backdrop & Gold Glow -->
+                <div class="footer-crest w-[180px] bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-inner filter drop-shadow-[0_0_20px_rgba(212,175,55,0.35)] animate-float">
+                    <img src="assets/logo.png" alt="One Piece Logo" class="w-full">
                 </div>
-                <p class="footer-credit">Made with dedication by <span class="author-highlight">Sarveshmariappan S</span></p>
-                <div class="footer-links">
-                    <a href="https://github.com/Sarveshmariappan" target="_blank" rel="noopener noreferrer" class="footer-link">
-                        <svg class="github-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <p class="text-sm tracking-wide text-[#f5f6f8] mt-4">Made with dedication by <span class="font-['Cinzel'] font-bold text-[#d4af37] shadow-[#d4af37]/40">Sarveshmariappan S</span></p>
+                <div class="my-2">
+                    <a href="https://github.com/Sarveshmariappan" target="_blank" rel="noopener noreferrer" class="footer-link inline-flex items-center gap-2.5 text-[#a0a5b5] hover:text-[#f5f6f8] text-xs font-semibold tracking-widest uppercase border border-white/10 py-2.5 px-5 rounded-[30px] bg-white/2 hover:border-[#d4af37] hover:bg-[#d4af37]/5 hover:shadow-[0_0_15px_rgba(212,175,55,0.15)] hover:-translate-y-0.5 transition-all duration-400">
+                        <svg class="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
                         </svg>
                         <span>GitHub Repository</span>
                     </a>
                 </div>
-                <p class="footer-disclaimer">Fan-made educational project. One Piece and all associated materials are trademarks of Eiichiro Oda and Shueisha.</p>
+                <p class="text-[0.7rem] leading-relaxed text-[#a0a5b5]/70 max-w-[450px]">Fan-made educational project. One Piece and all associated materials are trademarks of Eiichiro Oda and Shueisha.</p>
             </div>
         </footer>
 
     </main>
 
-    <!-- JavaScript File -->
-    <script src="script.js"></script>
+    <!-- Interactive Script Engine (Consolidated) -->
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            const isScreenshot = new URLSearchParams(window.location.search).get("screenshot") === "true";
+            if (isScreenshot) {
+                // Instantly hide loader
+                const loader = document.getElementById("loader");
+                if (loader) loader.style.display = "none";
+                
+                // Snap instantly to hash if present
+                if (window.location.hash) {
+                    const scrollContainer = document.querySelector(".scroll-container");
+                    if (scrollContainer) scrollContainer.style.scrollBehavior = "auto";
+                    
+                    const target = document.querySelector(window.location.hash);
+                    if (target) {
+                        target.scrollIntoView({ behavior: "auto", block: "start" });
+                        target.classList.add("active");
+                    }
+                }
+            }
+
+            initPreloader();
+            initScrollSpy();
+            initSpotlightTracking();
+            initMobileNav();
+            initParticles();
+        });
+
+        /* ==========================================================================
+           SIMULATED PRELOADER & LOADING BAR
+           ========================================================================== */
+        function initPreloader() {
+            if (new URLSearchParams(window.location.search).get("screenshot") === "true") return;
+            const loader = document.getElementById("loader");
+            const fill = document.querySelector(".loader-bar-fill");
+            const status = document.querySelector(".loader-status");
+            
+            const loadingPhases = [
+                { progress: 20, text: "Unfurling the sails..." },
+                { progress: 45, text: "Navigating the Grand Line..." },
+                { progress: 70, text: "Recruiting the swordsman..." },
+                { progress: 90, text: "Preparing the Thousand Sunny..." },
+                { progress: 100, text: "Ready to set sail!" }
+            ];
+            
+            let currentPhaseIdx = 0;
+            let currentProgress = 0;
+            
+            const interval = setInterval(() => {
+                if (currentPhaseIdx < loadingPhases.length) {
+                    const phase = loadingPhases[currentPhaseIdx];
+                    if (currentProgress < phase.progress) {
+                        currentProgress += Math.floor(Math.random() * 5) + 2;
+                        if (currentProgress > phase.progress) currentProgress = phase.progress;
+                        
+                        fill.style.width = `${currentProgress}%`;
+                        status.textContent = phase.text;
+                    } else {
+                        currentPhaseIdx++;
+                    }
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loader.style.opacity = "0";
+                        loader.style.visibility = "hidden";
+                    }, 300);
+                }
+            }, 60);
+
+            window.addEventListener("load", () => {
+                clearInterval(interval);
+                fill.style.width = "100%";
+                status.textContent = "Ready to set sail!";
+                setTimeout(() => {
+                    loader.style.opacity = "0";
+                    loader.style.visibility = "hidden";
+                }, 500);
+            });
+        }
+
+        /* ==========================================================================
+           SPOTLIGHT TRACKING ENGINE WITH LERP
+           ========================================================================== */
+        function initSpotlightTracking() {
+            const sections = document.querySelectorAll(".crew-section");
+            const trackingStates = new Map();
+            
+            sections.forEach(section => {
+                trackingStates.set(section, {
+                    targetX: 50,
+                    targetY: 50,
+                    currentX: 50,
+                    currentY: 50,
+                    isHovered: false
+                });
+                
+                section.addEventListener("mousemove", (e) => {
+                    updateTargetCoordinates(e, section);
+                });
+                
+                section.addEventListener("touchmove", (e) => {
+                    if (e.touches.length > 0) {
+                        updateTargetCoordinates(e.touches[0], section);
+                    }
+                }, { passive: true });
+                
+                const setHoverTrue = () => {
+                    const state = trackingStates.get(section);
+                    if (state) state.isHovered = true;
+                };
+                section.addEventListener("mouseenter", setHoverTrue);
+                section.addEventListener("touchstart", setHoverTrue, { passive: true });
+                
+                const resetToCenter = () => {
+                    const state = trackingStates.get(section);
+                    if (state) {
+                        state.isHovered = false;
+                        state.targetX = 50;
+                        state.targetY = 50;
+                    }
+                };
+                section.addEventListener("mouseleave", resetToCenter);
+                section.addEventListener("touchend", resetToCenter);
+            });
+            
+            function updateTargetCoordinates(event, section) {
+                const state = trackingStates.get(section);
+                if (!state) return;
+                
+                const rect = section.getBoundingClientRect();
+                const rawX = event.clientX - rect.left;
+                const rawY = event.clientY - rect.top;
+                
+                state.targetX = (rawX / rect.width) * 100;
+                state.targetY = (rawY / rect.height) * 100;
+            }
+            
+            function animateSpotlights() {
+                sections.forEach(section => {
+                    const state = trackingStates.get(section);
+                    if (!state) return;
+                    
+                    const dx = state.targetX - state.currentX;
+                    const dy = state.targetY - state.currentY;
+                    
+                    if (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05) {
+                        state.currentX += dx * 0.08;
+                        state.currentY += dy * 0.08;
+                        
+                        section.style.setProperty("--mouse-x", `${state.currentX}%`);
+                        section.style.setProperty("--mouse-y", `${state.currentY}%`);
+                    }
+                });
+                
+                requestAnimationFrame(animateSpotlights);
+            }
+            
+            animateSpotlights();
+        }
+
+        /* ==========================================================================
+           SCROLL SPY & PROGRESS INDICATOR
+           ========================================================================== */
+        function initScrollSpy() {
+            const sections = document.querySelectorAll(".scroll-container > section");
+            const navItems = document.querySelectorAll(".sidebar .nav-item");
+            const scrollProgress = document.getElementById("scroll-progress");
+            const scrollContainer = document.querySelector(".scroll-container");
+            
+            const observerOptions = {
+                root: scrollContainer,
+                rootMargin: "0px",
+                threshold: 0.5
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const targetId = entry.target.getAttribute("id");
+                        
+                        sections.forEach(sec => sec.classList.remove("active"));
+                        entry.target.classList.add("active");
+                        
+                        // Handle opacity transitions for active cards
+                        const activeCard = entry.target.querySelector(".character-card");
+                        if (activeCard) {
+                            activeCard.style.opacity = "1";
+                            activeCard.style.transform = "translateY(0)";
+                        }
+                        
+                        navItems.forEach(item => {
+                            item.classList.remove("active");
+                            if (item.getAttribute("data-target") === targetId) {
+                                item.classList.add("active");
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            sections.forEach(section => observer.observe(section));
+            
+            scrollContainer.addEventListener("scroll", () => {
+                const scrollTop = scrollContainer.scrollTop;
+                const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+                const percentage = (scrollTop / scrollHeight) * 100;
+                
+                scrollProgress.style.width = `${percentage}%`;
+            });
+            
+            navItems.forEach(item => {
+                const link = item.querySelector("a");
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const targetId = item.getAttribute("data-target");
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                        
+                        const sidebar = document.querySelector(".sidebar");
+                        const toggleBtn = document.getElementById("sidebar-toggle-btn");
+                        if (sidebar.classList.contains("mobile-open")) {
+                            sidebar.classList.remove("mobile-open");
+                            toggleBtn.classList.remove("toggle-active");
+                        }
+                    }
+                });
+            });
+            
+            const heroScrollIndicator = document.querySelector(".scroll-indicator");
+            if (heroScrollIndicator) {
+                heroScrollIndicator.addEventListener("click", () => {
+                    const firstCrewSection = document.querySelector(".crew-section");
+                    if (firstCrewSection) {
+                        firstCrewSection.scrollIntoView({ behavior: "smooth" });
+                    }
+                });
+            }
+        }
+
+        /* ==========================================================================
+           MOBILE NAVIGATION MENU
+           ========================================================================== */
+        function initMobileNav() {
+            const sidebar = document.querySelector(".sidebar");
+            const toggleBtn = document.getElementById("sidebar-toggle-btn");
+            
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle("mobile-open");
+                    toggleBtn.classList.toggle("toggle-active");
+                });
+            }
+            
+            document.addEventListener("click", (e) => {
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.contains(e.target) && sidebar.classList.contains("mobile-open")) {
+                        sidebar.classList.remove("mobile-open");
+                        if (toggleBtn) toggleBtn.classList.remove("toggle-active");
+                    }
+                }
+            });
+        }
+
+        /* ==========================================================================
+           FLOATING CANVAS PARTICLE ENGINE (GLOWING EMBERS)
+           ========================================================================== */
+        function initParticles() {
+            const canvas = document.getElementById("particle-canvas");
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext("2d");
+            let particles = [];
+            
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = canvas.height + Math.random() * 100;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedY = -(Math.random() * 0.8 + 0.4);
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.life = Math.random() * 1500 + 1000;
+                    this.maxLife = this.life;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                    
+                    this.colorType = Math.random() > 0.85 ? "crimson" : "gold";
+                    if (this.colorType === "gold") {
+                        this.r = 212; this.g = 175; this.b = 55;
+                    } else {
+                        this.r = 230; this.g = 57; this.b = 70;
+                    }
+                }
+                
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    this.life--;
+                    
+                    this.opacity = (this.life / this.maxLife) * 0.6;
+                    
+                    if (this.y < 0 || this.life <= 0 || this.x < 0 || this.x > canvas.width) {
+                        this.reset();
+                    }
+                }
+                
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.r}, ${this.g}, ${this.b}, ${this.opacity})`;
+                    ctx.shadowBlur = this.size * 2;
+                    ctx.shadowColor = `rgba(${this.r}, ${this.g}, ${this.b}, ${this.opacity})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener("resize", () => {
+                resizeCanvas();
+                createParticles();
+            });
+            
+            function createParticles() {
+                particles = [];
+                const density = window.innerWidth < 768 ? 40 : 100;
+                for (let i = 0; i < density; i++) {
+                    particles.push(new Particle());
+                    particles[i].y = Math.random() * canvas.height;
+                }
+            }
+            
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(loop);
+            }
+            
+            resizeCanvas();
+            createParticles();
+            loop();
+        }
+    </script>
 </body>
 </html>
