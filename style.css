@@ -535,6 +535,11 @@ body {
     );
 }
 
+/* Custom override for Franky section to make the foreground posing crew clearly visible */
+#franky .reveal-mask {
+    filter: grayscale(0.15) brightness(0.4) contrast(1.05) blur(2px);
+}
+
 /* Soft glowing edge surrounding the spotlight reveal circle */
 .spotlight-glow {
     position: absolute;
